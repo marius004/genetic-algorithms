@@ -1,1 +1,1 @@
-python3 main.py && cat output.txt | tail --lines=50
+echo "" > output.txt && python3 main.py && cat output.txt | tail --lines=50

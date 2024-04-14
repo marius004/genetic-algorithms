@@ -29,7 +29,7 @@ class Chromosome:
     def fitness(self):
         return self.fitness_function(self.nr)
     
-    def crossover(self, other: 'Chromosome') -> Tuple['Chromosome', 'Chromosome']: 
+    def crossover(self, other: 'Chromosome') -> Tuple['Chromosome', 'Chromosome', int]: 
         breaking_point = np.random.randint(0, self.length)
         child1 = self.str[:breaking_point] + other.str[breaking_point:]
         child2 = other.str[:breaking_point] + self.str[breaking_point:]
@@ -199,7 +199,7 @@ class Population:
 
             fd.write("Dupa recombinare:\n")
             fd.write(str(Population.from_old_population(self, new_population)))
-            fd.write("\n")
+            fd.write("\n\n")
         
         return new_population
     
@@ -207,8 +207,8 @@ class Population:
         new_population = copy.deepcopy(population)
         
         to_mutate = []
-        for i in range(len(new_population)):
-            if np.random.uniform(0, 1) < self.mutation_probability: 
+        for i, probability in enumerate(np.random.uniform(0, 1, len(new_population))):
+            if probability < self.mutation_probability: 
                 new_population[i] = new_population[i].mutate()
                 to_mutate.append(i)
         
@@ -242,8 +242,7 @@ class Population:
             _, chromosome_index = new_population.select_chromosome(cumulative_probabilities, probability)
             next_population[chromosome_index] = best_chromosomes[i]    
         
-        return next_population
-        
+        return next_population    
     
     def next_generation(self, is_first_gen:bool=False, fd=None) -> 'Population':
         population = self.selection(is_first_gen, fd)
